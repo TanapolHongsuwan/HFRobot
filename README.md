@@ -1,7 +1,7 @@
 # HFRobot
-Happy Fan Robot (HFRobot) for CIT Advanced Robotics Project
+Happy Fantastic Robot (HFRobot) for CIT Advanced Robotics Project
 
 ## Requirement
-* DC Moter
-* Motor Driver
+
 * Fans
+* Camera Sensor
