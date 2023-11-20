@@ -6,6 +6,7 @@ Happy Fantastic Robot (HFRobot) for CIT Advanced Robotics Project
 * Fans
 * Camera Sensor
 
+## 必要なパッケージのインストール
 ```
 pip install -r requirements.txt
 ```
