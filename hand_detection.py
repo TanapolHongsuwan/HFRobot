@@ -30,14 +30,14 @@ def FingerAngle(landmarks_array):
     return hand_angles
 
 def HandshapeJudge(hand_angles):
-    hand_shape = 0
+    hand_shape = "NoSign"
 
     if hand_angles[1] < 90 and hand_angles[2] < 90 and hand_angles[3] < 90 and hand_angles[4] < 90:
-        hand_shape = 1
+        hand_shape = "Rock"
     elif hand_angles[1] >= 90 and hand_angles[2] >= 90 and hand_angles[3] < 90 and hand_angles[4] < 90:
-        hand_shape = 2
+        hand_shape = "Scissors"
     elif hand_angles[1] >= 90 and hand_angles[2] >= 90 and hand_angles[3] >= 90 and hand_angles[4] >= 90:
-        hand_shape = 3
+        hand_shape = "Paper"
 
     return hand_shape
 
@@ -55,22 +55,16 @@ while cap.isOpened():
     results = hands.process(image)
 
     # RGBからBGRに戻す
-    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+    #image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
     # 検出された手の情報を描画
     if results.multi_hand_landmarks:
         for hand_landmarks in results.multi_hand_landmarks:
             #mp_drawing.draw_landmarks(image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
-            hand_angles = FingerAngle(LandmarksToNumpy(hand_landmarks.landmark))
-            hand_shape = HandshapeJudge(hand_angles)
-            hand_shape_text = "NoSign"
-            if hand_shape == 1:
-                hand_shape_text = "Rock"
-            elif hand_shape == 2:
-                hand_shape_text = "Scissors"
-            elif hand_shape == 3:
-                hand_shape_text = "Paper"
-            print(hand_shape_text)
+            finger_angles = FingerAngle(LandmarksToNumpy(hand_landmarks.landmark))
+            hand_shape = HandshapeJudge(finger_angles)
+            
+            print(hand_shape)
             #cv2.putText(image, hand_shape_text, (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
             #print(type(hand_landmarks.landmark[0].x))
 
