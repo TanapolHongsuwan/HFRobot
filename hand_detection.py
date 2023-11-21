@@ -9,12 +9,8 @@ mp_drawing = mp.solutions.drawing_utils
 
 
 def LandmarksToNumpy(landmarks):
-    landmark_array = np.zeros((len(landmarks), 3), dtype=np.float32)
+    return np.array([[landmark.x, landmark.y, landmark.z] for landmark in landmarks], dtype=np.float32)
 
-    for i, landmark in enumerate(landmarks):
-        landmark_array[i] = [landmark.x, landmark.y, landmark.z]
-
-    return landmark_array
 
 def CalculateAngle(v1, v2):
     dot_product = np.dot(v1, v2)
@@ -64,7 +60,7 @@ while cap.isOpened():
     # 検出された手の情報を描画
     if results.multi_hand_landmarks:
         for hand_landmarks in results.multi_hand_landmarks:
-            mp_drawing.draw_landmarks(image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
+            #mp_drawing.draw_landmarks(image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
             hand_angles = FingerAngle(LandmarksToNumpy(hand_landmarks.landmark))
             hand_shape = HandshapeJudge(hand_angles)
             hand_shape_text = "NoSign"
@@ -79,7 +75,7 @@ while cap.isOpened():
 
     # ウィンドウに映像を表示
     cv2.imshow('MediaPipe Hands', image)
-    if cv2.waitKey(250) & 0xFF == 27:
+    if cv2.waitKey(25) & 0xFF == 27:
         break
 
 # リソースを解放
