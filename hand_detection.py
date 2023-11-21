@@ -70,11 +70,12 @@ while cap.isOpened():
                 hand_shape_text = "Scissors"
             elif hand_shape == 3:
                 hand_shape_text = "Paper"
-            cv2.putText(image, hand_shape_text, (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+            print(hand_shape_text)
+            #cv2.putText(image, hand_shape_text, (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
             #print(type(hand_landmarks.landmark[0].x))
 
     # ウィンドウに映像を表示
-    cv2.imshow('MediaPipe Hands', image)
+    #cv2.imshow('MediaPipe Hands', image)
     if cv2.waitKey(25) & 0xFF == 27:
         break
 
