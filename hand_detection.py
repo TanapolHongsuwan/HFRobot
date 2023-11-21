@@ -79,7 +79,7 @@ while cap.isOpened():
 
     # ウィンドウに映像を表示
     cv2.imshow('MediaPipe Hands', image)
-    if cv2.waitKey(5) & 0xFF == 27:
+    if cv2.waitKey(250) & 0xFF == 27:
         break
 
 # リソースを解放
