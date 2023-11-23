@@ -26,13 +26,14 @@ face_position = (width // 2, height // 2)
 
 # Define emotions as different sets of eyes and mouths
 emotions = {
-    'happy': {'eyes': 'happy', 'mouth': 'smile'},
-    'sad': {'eyes': 'sad', 'mouth': 'frown'},
-    'angry': {'eyes': 'angry', 'mouth': 'line'}
+    'normal': {'eyebrows': 'none', 'eyes': 'normal', 'mouth': 'smile'},
+    'tie': {'eyebrows': 'surprise', 'eyes': 'normal', 'mouth': 'surprise'},
+    'sad': {'eyebrows': 'surprise', 'eyes': 'sad', 'mouth': 'frown'},
+    'angry': {'eyebrows': 'surprise', 'eyes': 'angry', 'mouth': 'line'}
 }
 
 # Start with a default emotion
-current_emotion = 'happy'
+current_emotion = 'normal'
 
 # Function to draw the robot face based on the current emotion
 def draw_robot_face(emotion):
@@ -41,11 +42,20 @@ def draw_robot_face(emotion):
     # Draw the face
     pygame.draw.circle(screen, BLACK, face_position, face_radius)
 
+    # Eyebrows
+    if emotions[emotion]['eyebrows'] == 'none':
+        # Draw nothing
+        pass
+    elif emotions[emotion]['eyebrows'] == 'surprise':
+        # Draw surprise eyebrows
+        pygame.draw.arc(screen, LIGHT_BLUE, (face_position[0] - 280, face_position[1] - 200, 80, 80), 2*3.14, 3.14, 5) # posw,posh) erase (draw black), draw (blue), line size)
+        pygame.draw.arc(screen, LIGHT_BLUE, (face_position[0] + 220, face_position[1] - 200, 80, 80), 2*3.14, 3.14, 5) # posw,posh) erase (draw black), draw (blue), line size)
+
     # Eyes
-    if emotions[emotion]['eyes'] == 'happy':
-        # Draw happy eyes
-        pygame.draw.ellipse(screen, LIGHT_BLUE, (face_position[0] - 50, face_position[1] - 20, 20, 30))
-        pygame.draw.ellipse(screen, LIGHT_BLUE, (face_position[0] + 20, face_position[1] - 20, 20, 30))
+    if emotions[emotion]['eyes'] == 'normal':
+        # Draw normal eyes
+        pygame.draw.ellipse(screen, LIGHT_BLUE, (face_position[0] - 250, face_position[1] - 100, 20, 40)) #pos, w, h
+        pygame.draw.ellipse(screen, LIGHT_BLUE, (face_position[0] + 250, face_position[1] - 100, 20, 40))
     elif emotions[emotion]['eyes'] == 'sad':
         # Draw sad eyes
         pygame.draw.ellipse(screen, LIGHT_BLUE, (face_position[0] - 50, face_position[1] - 20, 30, 20))
@@ -58,7 +68,10 @@ def draw_robot_face(emotion):
     # Mouth
     if emotions[emotion]['mouth'] == 'smile':
         # Draw smile mouth
-        pygame.draw.arc(screen, LIGHT_BLUE, (face_position[0] - 45, face_position[1], 80, 50), 3.14, 2*3.14, 5)
+        pygame.draw.arc(screen, LIGHT_BLUE, (face_position[0] - 40, face_position[1], 80, 80), 3.14, 2*3.14, 5) # w,h) erase (draw black), draw (blue), line size)
+    elif emotions[emotion]['mouth'] == 'surprise':
+        # Draw surprise mouth
+        pygame.draw.arc(screen, LIGHT_BLUE, (face_position[0] - 30, face_position[1], 50, 80), 0, 2*3.14, 5)
     elif emotions[emotion]['mouth'] == 'frown':
         # Draw frown mouth
         pygame.draw.arc(screen, LIGHT_BLUE, (face_position[0] - 40, face_position[1] + 20, 80, 50), 3.14, 2*3.14, 5)
@@ -78,10 +91,12 @@ while running:
         elif event.type == pygame.KEYDOWN:
             # Check for specific key presses to change the emotion
             if event.key == pygame.K_1:
-                current_emotion = 'happy'
+                current_emotion = 'normal'
             elif event.key == pygame.K_2:
-                current_emotion = 'sad'
+                current_emotion = 'tie'
             elif event.key == pygame.K_3:
+                current_emotion = 'sad'
+            elif event.key == pygame.K_4:
                 current_emotion = 'angry'
     
     draw_robot_face(current_emotion)
