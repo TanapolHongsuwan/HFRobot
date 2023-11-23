@@ -50,7 +50,6 @@ def HandshapeJudge(hand_angles):
 cap = cv2.VideoCapture(0)
 pygame.init()
 
-#######################################
 
 # Set the display to full screen
 infoObject = pygame.display.Info()
