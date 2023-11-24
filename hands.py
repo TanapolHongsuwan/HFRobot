@@ -21,13 +21,10 @@ paper_image = pygame.transform.scale(paper_image, (100, 100))
 # Set the initial image to None (to display nothing)
 current_image = None
 
-###################################
-
 # Set the display to full screen
 infoObject = pygame.display.Info()
 width, height = infoObject.current_w, infoObject.current_h
 #screen = pygame.display.set_mode((width, height), pygame.FULLSCREEN)
-
 
 # Define colors
 WHITE = (255, 255, 255)
@@ -38,7 +35,6 @@ GRAY = (192, 192, 192)  # Color for the face
 face_color = WHITE
 face_radius = 100
 face_position = (width // 2, height // 2)
-
 
 # Define emotions as different sets of eyes and mouths
 emotions = {
@@ -84,8 +80,6 @@ def draw_robot_face(emotion):
 
     pygame.display.flip()
 
-
-
 # Main loop
 running = True
 current_emotion = 'happy'
@@ -115,15 +109,17 @@ while running:
         current_image = paper_image
 
     # Get hand shape
-    current_emotion, current_emotion_num = hd.GetHandShape()
-    judge = ( key - current_emotion_num + 3 ) % 3
-    print(current_emotion, current_emotion_num, key, judge)
+    hand_shape = hd.GetHandShape()
+    judge = ( key - hand_shape + 3 ) % 3
 
     if judge == 0:
+        current_emotion = 'sad'
         print('Draw')
     elif judge == 1:
+        current_emotion = 'angry'
         print('Win')
     elif judge == 2:
+        current_emotion = 'happy'
         print('Lose')
     #print(current_emotion)
 
@@ -132,15 +128,10 @@ while running:
     # Draw the current image if it's not None
     #if current_image is not None:
     screen.blit(current_image, (50, 150))  # Draw the image at position (50, 50)
-    pygame.display.update()
-    pygame.time.wait(1000)
-
 
     # Update the display
-    #pygame.display.flip()
     pygame.display.update()
-    print(1)
-
+    pygame.time.wait(10000)
 
 # Quit pygame
 pygame.quit()

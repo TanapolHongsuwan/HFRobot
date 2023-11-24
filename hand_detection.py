@@ -1,5 +1,4 @@
 import cv2
-import pygame
 import numpy as np
 import mediapipe as mp
 
@@ -24,23 +23,19 @@ def FingerAngle(landmarks_array):
     return hand_angles
 
 def HandshapeJudge(hand_angles):
-    hand_shape_num = 0
-    hand_shape = "happy"
+    hand_shape = 0
 
     if hand_angles[1] < 90 and hand_angles[2] < 90 and hand_angles[3] < 90 and hand_angles[4] < 90:
-        hand_shape_num = 0
-        hand_shape = "happy"
+        hand_shape = 0
         #hand_shape = "Rock"
     elif hand_angles[1] >= 90 and hand_angles[2] >= 90 and hand_angles[3] < 90 and hand_angles[4] < 90:
-        hand_shape_num = 1
-        hand_shape = "sad"
+        hand_shape = 1
         #hand_shape = "Scissors"
     elif hand_angles[1] >= 90 and hand_angles[2] >= 90 and hand_angles[3] >= 90 and hand_angles[4] >= 90:
-        hand_shape_num = 2
-        hand_shape = "angry"
+        hand_shape = 2
         #hand_shape = "Paper"
 
-    return hand_shape, hand_shape_num
+    return hand_shape
 
 def GetHandShape():
     # ウェブカメラからの映像を取得
@@ -59,19 +54,16 @@ def GetHandShape():
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         results = hands.process(image)
 
-        # RGBからBGRに戻す
-        #image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-
         # 検出された手の情報を描画
         if results.multi_hand_landmarks:
             for hand_landmarks in results.multi_hand_landmarks:
                 #mp_drawing.draw_landmarks(image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
                 finger_angles = FingerAngle(LandmarksToNumpy(hand_landmarks.landmark))
-                hand_shape, hand_shape_num = HandshapeJudge(finger_angles)
+                hand_shape = HandshapeJudge(finger_angles)
                 if hand_shape == 'NoSign':
                     pass
                 else:
-                    return hand_shape, hand_shape_num
+                    return hand_shape
 
         # ウィンドウに映像を表示
         #cv2.imshow('MediaPipe Hands', image)
