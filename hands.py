@@ -48,7 +48,6 @@ current_emotion = 'happy'
 
 # Function to draw the robot face based on the current emotion
 def draw_robot_face(emotion):
-    screen.fill(BLACK)
 
     # Draw the face
     pygame.draw.circle(screen, BLACK, face_position, face_radius)
@@ -78,12 +77,13 @@ def draw_robot_face(emotion):
         # Draw line mouth
         pygame.draw.line(screen, LIGHT_BLUE, (face_position[0] - 40, face_position[1] + 40), (face_position[0] + 40, face_position[1] + 40), 5)
 
-    pygame.display.flip()
+    #pygame.display.flip()
 
 # Main loop
 running = True
 current_emotion = 'happy'
 current_image = paper_image
+font = pygame.font.Font(None, 55)
 
 # Clear the screen
 screen.fill((0, 0, 0))
@@ -108,6 +108,20 @@ while running:
     elif key == 2:
         current_image = paper_image
 
+    for i in range(3, 0, -1):
+        screen.fill((0, 0, 0))
+        text = font.render(str(i), True, (255,255,255))
+        screen.blit(text, [20, 100])
+        screen.blit(rock_image, (50, 250))
+        draw_robot_face('happy')
+        pygame.display.update()
+        pygame.time.delay(1000)
+
+    screen.fill((0, 0, 0))
+    screen.blit(current_image, (50, 250))
+    draw_robot_face('happy')
+    pygame.display.update()
+
     # Get hand shape
     hand_shape = hd.GetHandShape()
     judge = ( key - hand_shape + 3 ) % 3
@@ -123,15 +137,18 @@ while running:
         print('Lose')
     #print(current_emotion)
 
+    screen.fill((0, 0, 0))
+
     draw_robot_face(current_emotion)
 
     # Draw the current image if it's not None
     #if current_image is not None:
-    screen.blit(current_image, (50, 150))  # Draw the image at position (50, 50)
+    screen.blit(current_image, (50, 250))  # Draw the image at position (50, 50)
 
     # Update the display
     pygame.display.update()
-    pygame.time.wait(10000)
+    pygame.time.delay(5000)
+
 
 # Quit pygame
 pygame.quit()
