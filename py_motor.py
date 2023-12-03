@@ -21,10 +21,12 @@ current_angle = 90  # Assuming servo starts at 90 degrees
 # Function to set the servo position gradually
 def set_servo_angle(channel, target_angle, delay=0.02):
     global current_angle  # Use the global variable to track the current angle
+    min_pulse = 205  # Min pulse length out of 4096
+    max_pulse = 410  # Max pulse length out of 4096
+    
     step = 1 if target_angle > current_angle else -1
     for angle in range(current_angle, target_angle, step):
-        pulse_length = 4096  # 12-bit resolution
-        pulse = int((pulse_length * angle) / 180)  # Convert angle to pulse
+        pulse = int(min_pulse + (angle / 180.0) * (max_pulse - min_pulse))
         pwm.set_pwm(channel, 0, pulse)
         time.sleep(delay)  # Wait for a short period to see the movement
     current_angle = target_angle  # Update the current angle once the loop is complete
@@ -49,4 +51,3 @@ while running:
 
 # Quit Pygame
 pygame.quit()
-
