@@ -41,7 +41,7 @@ while running:
             # Move servo when certain keys are pressed
             if event.key == pygame.K_LEFT:
                 # Turn servo to 45 degrees slowly
-                set_servo_angle(servo_channel, 45)
+                set_servo_angle(servo_channel, 15)
             elif event.key == pygame.K_RIGHT:
                 # Turn servo to 135 degrees slowly
                 set_servo_angle(servo_channel, 135)
