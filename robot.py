@@ -57,6 +57,10 @@ emotions = {
 # Start with a default emotion
 current_emotion = 'normal'
 
+# Define servo channel and starting angle
+servo_channel = 0  # The channel the servo is connected to
+current_angle = 90  # Assuming servo starts at 90 degrees
+
 # Function to set the servo position gradually
 def set_servo_angle(channel, target_angle, delay=0.02):
     global current_angle  # Use the global variable to track the current angle
