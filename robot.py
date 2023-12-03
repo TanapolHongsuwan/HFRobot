@@ -1,0 +1,218 @@
+import pygame
+import random
+import time
+import hand_detection as hd
+import Adafruit_PCA9685
+
+# Initialize the PCA9685 using the default address (0x40).
+pwm = Adafruit_PCA9685.PCA9685()
+
+# Set the PWM frequency to 50hz, good for servos.
+pwm.set_pwm_freq(50)
+
+# Initialize Pygame
+pygame.init()
+
+# Set up the display
+screen = pygame.display.set_mode((800, 600), pygame.FULLSCREEN)
+
+# Load images
+rock_image = pygame.image.load('image/rock.png')
+scissors_image = pygame.image.load('image/scissors.png')
+paper_image = pygame.image.load('image/paper.png')
+
+# Resize the images
+rock_image = pygame.transform.scale(rock_image, (100, 100))
+scissors_image = pygame.transform.scale(scissors_image, (100, 100))
+paper_image = pygame.transform.scale(paper_image, (100, 100))
+
+# Set the initial image to None (to display nothing)
+current_image = None
+
+# Set the display to full screen
+infoObject = pygame.display.Info()
+width, height = infoObject.current_w, infoObject.current_h
+#screen = pygame.display.set_mode((width, height), pygame.FULLSCREEN)
+
+# Define colors
+WHITE = (255, 255, 255)
+LIGHT_BLUE = (173, 216, 230)  # Color for the eyes
+BLACK = (0, 0, 0)
+GRAY = (192, 192, 192)  # Color for the face
+# Set up robot face properties
+face_color = WHITE
+face_radius = 100
+face_position = (width // 2, height // 2)
+
+# Define emotions as different sets of eyes and mouths
+emotions = {
+    'normal': {'eyebrows': 'none', 'eyes': 'normal', 'mouth': 'smile'},
+    'tie': {'eyebrows': 'surprise', 'eyes': 'normal', 'mouth': 'surprise'},
+    'win1': {'eyebrows': 'none', 'eyes': 'happy', 'mouth': 'cat'},
+    'lose1': {'eyebrows': 'surprise', 'eyes': 'normal', 'mouth': 'sad'},
+    'win2': {'eyebrows': 'none', 'eyes': 'excited', 'mouth': 'tongue'},
+    'lose2': {'eyebrows': 'none', 'eyes': 'cry', 'mouth': 'sad'}
+}
+
+# Start with a default emotion
+current_emotion = 'normal'
+
+# Function to set the servo position gradually
+def set_servo_angle(channel, target_angle, delay=0.02):
+    global current_angle  # Use the global variable to track the current angle
+    min_pulse = 205  # Min pulse length out of 4096
+    max_pulse = 410  # Max pulse length out of 4096
+    
+    step = 1 if target_angle > current_angle else -1
+    for angle in range(current_angle, target_angle, step):
+        pulse = int(min_pulse + (angle / 180.0) * (max_pulse - min_pulse))
+        pwm.set_pwm(channel, 0, pulse)
+        time.sleep(delay)  # Wait for a short period to see the movement
+    current_angle = target_angle  # Update the current angle once the loop is complete
+
+# Function to draw the robot face based on the current emotion
+def draw_robot_face(emotion):
+    # Draw the face
+    pygame.draw.circle(screen, BLACK, face_position, face_radius)
+
+    # Eyebrows
+    if emotions[emotion]['eyebrows'] == 'none':
+        # Draw nothing
+        pass
+    elif emotions[emotion]['eyebrows'] == 'surprise':
+        # Draw surprise eyebrows
+        pygame.draw.arc(screen, LIGHT_BLUE, (face_position[0] - 430, face_position[1] - 250, 100, 100), 2*3.14, 3.14, 8) # posw,posh) erase (draw black), draw (blue), line size)
+        pygame.draw.arc(screen, LIGHT_BLUE, (face_position[0] + 370, face_position[1] - 250, 100, 100), 2*3.14, 3.14, 8) # posw,posh) erase (draw black), draw (blue), line size)
+
+    # Eyes
+    if emotions[emotion]['eyes'] == 'normal':
+        # Draw normal eyes
+        pygame.draw.ellipse(screen, LIGHT_BLUE, (face_position[0] - 400, face_position[1] - 150, 30, 100)) #pos, w, h
+        pygame.draw.ellipse(screen, LIGHT_BLUE, (face_position[0] + 400, face_position[1] - 150, 30, 100))
+    elif emotions[emotion]['eyes'] == 'happy':
+        # Draw happy eyes
+        pygame.draw.arc(screen, LIGHT_BLUE, (face_position[0] - 430, face_position[1] - 180, 100, 100), 2*3.14, 3.14, 8)
+        pygame.draw.arc(screen, LIGHT_BLUE, (face_position[0] + 370, face_position[1] - 180, 100, 100), 2*3.14, 3.14, 8)
+    elif emotions[emotion]['eyes'] == 'excited':
+        # Draw excited eyes
+        pygame.draw.line(screen, LIGHT_BLUE, (face_position[0] - 300, face_position[1] - 150), (face_position[0] - 400, face_position[1] - 190), 8)
+        pygame.draw.line(screen, LIGHT_BLUE, (face_position[0] - 400, face_position[1] - 110), (face_position[0] - 300, face_position[1] - 150), 8)
+        pygame.draw.line(screen, LIGHT_BLUE, (face_position[0] + 300, face_position[1] - 150), (face_position[0] + 400, face_position[1] - 190), 8)
+        pygame.draw.line(screen, LIGHT_BLUE, (face_position[0] + 400, face_position[1] - 110), (face_position[0] + 300, face_position[1] - 150), 8)
+    elif emotions[emotion]['eyes'] == 'cry':
+        # Draw cry eyes
+        pygame.draw.line(screen, LIGHT_BLUE, (face_position[0] - 300, face_position[1] - 200), (face_position[0] - 400, face_position[1] - 200), 8)
+        pygame.draw.line(screen, LIGHT_BLUE, (face_position[0] + 300, face_position[1] - 200), (face_position[0] + 400, face_position[1] - 200), 8)
+        pygame.draw.line(screen, LIGHT_BLUE, (face_position[0] - 375, face_position[1] - 200), (face_position[0] - 375, face_position[1] + 200), 5)
+        pygame.draw.line(screen, LIGHT_BLUE, (face_position[0] - 325, face_position[1] - 200), (face_position[0] - 325, face_position[1] + 200), 5)
+        pygame.draw.line(screen, LIGHT_BLUE, (face_position[0] + 325, face_position[1] - 200), (face_position[0] + 325, face_position[1] + 200), 5)
+        pygame.draw.line(screen, LIGHT_BLUE, (face_position[0] + 375, face_position[1] - 200), (face_position[0] + 375, face_position[1] + 200), 5)
+
+
+    # Mouth
+    if emotions[emotion]['mouth'] == 'smile':
+        # Draw smile mouth
+        pygame.draw.arc(screen, LIGHT_BLUE, (face_position[0] - 40, face_position[1] + 50, 80, 80), 3.14, 2*3.14, 5) # w,h) erase (draw black), draw (blue), line size)
+    elif emotions[emotion]['mouth'] == 'surprise':
+        # Draw surprise mouth
+        pygame.draw.arc(screen, LIGHT_BLUE, (face_position[0] - 30, face_position[1], 50, 80), 0, 2*3.14, 5)
+    elif emotions[emotion]['mouth'] == 'cat':
+        # Draw cat mouth
+        pygame.draw.arc(screen, LIGHT_BLUE, (face_position[0] - 60, face_position[1] + 100, 80, 80), 3.14, 2*3.14, 5)
+        pygame.draw.arc(screen, LIGHT_BLUE, (face_position[0] + 10, face_position[1] + 100, 80, 80), 3.14, 2*3.14, 5)
+    elif emotions[emotion]['mouth'] == 'sad':
+        # Draw sad mouth
+        pygame.draw.arc(screen, LIGHT_BLUE, (face_position[0] - 40, face_position[1] + 50, 110, 150), 2*3.14, 3.14, 5)
+        pygame.draw.line(screen, LIGHT_BLUE, (face_position[0] - 20, face_position[1] + 120), (face_position[0] - 10, face_position[1] + 90), 5)
+        pygame.draw.line(screen, LIGHT_BLUE, (face_position[0] + 50, face_position[1] + 120), (face_position[0] + 40, face_position[1] + 90), 5)
+    elif emotions[emotion]['mouth'] == 'tongue':
+        # Draw mouth with tongue
+        pygame.draw.arc(screen, LIGHT_BLUE, (face_position[0] - 80, face_position[1] + 20, 80, 80), 3.14, 2*3.14, 5)
+        pygame.draw.arc(screen, LIGHT_BLUE, (face_position[0] - 10, face_position[1] + 20, 80, 80), 3.14, 2*3.14, 5)
+        pygame.draw.arc(screen, LIGHT_BLUE, (face_position[0] - 40, face_position[1], 80, 200), 3.14, 2*3.14, 5)
+
+    pygame.display.flip()
+
+
+# Main loop
+running = True
+current_emotion = 'happy'
+current_image = paper_image
+font = pygame.font.Font(None, 55)
+
+# Clear the screen
+screen.fill((0, 0, 0))
+
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+            running = False
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    exit()
+
+    key = random.randrange(3)
+    if key == 0:
+        current_image = rock_image
+    elif key == 1:
+        current_image = scissors_image
+    elif key == 2:
+        current_image = paper_image
+
+    for i in range(3, 0, -1):
+        screen.fill((0, 0, 0))
+        text = font.render(str(i), True, (255,255,255))
+        screen.blit(text, [20, 100])
+        screen.blit(rock_image, (50, 350))
+        draw_robot_face('normal')
+        flipped_screen = pygame.transform.flip(screen, True, True)  # Flip horizontally and vertically
+        screen.blit(flipped_screen, (0, 0))
+        pygame.display.update()
+        pygame.time.delay(1000)
+
+    screen.fill((0, 0, 0))
+    screen.blit(rock_image, (50, 350))
+    draw_robot_face('normal')
+    flipped_screen = pygame.transform.flip(screen, True, True)  # Flip horizontally and vertically
+    screen.blit(flipped_screen, (0, 0))
+    pygame.display.update()
+
+    # Get hand shape
+    hand_shape = hd.GetHandShape()
+    judge = ( key - hand_shape + 3 ) % 3
+
+    if judge == 0:
+        current_emotion = 'tie'
+        print('Draw')
+    elif judge == 1:
+        current_emotion = 'lose2'
+        print('Win')
+        set_servo_angle(servo_channel, 135)
+        set_servo_angle(servo_channel, 25)
+    elif judge == 2:
+        current_emotion = 'win2'
+        print('Lose')
+    #print(current_emotion)
+
+    screen.fill((0, 0, 0))
+
+    # Draw the current image if it's not None
+    if current_image is not None:
+        screen.blit(current_image, (50, 350))  # Draw the image at position (50, 350)
+    draw_robot_face(current_emotion)
+
+    # Flip and update the screen
+    flipped_screen = pygame.transform.flip(screen, True, True)  # Flip horizontally and vertical
+    screen.blit(flipped_screen, (0, 0))
+
+    # Update the display
+    pygame.display.update()
+    pygame.time.delay(5000)
+
+
+# Quit pygame
+pygame.quit()
