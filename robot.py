@@ -194,9 +194,9 @@ while running:
         print('Draw')
     elif judge == 1:
         current_emotion = 'lose2'
+        print('Win')
         set_servo_angle(servo_channel, 135)
         set_servo_angle(servo_channel, 25)
-        print('Win')
     elif judge == 2:
         current_emotion = 'win2'
         print('Lose')
