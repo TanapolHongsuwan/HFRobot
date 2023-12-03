@@ -1,11 +1,12 @@
+import time
 import pygame
 import Adafruit_PCA9685
 
 # Initialize the PCA9685 using the default address (0x40).
 pwm = Adafruit_PCA9685.PCA9685()
 
-# Set the PWM frequency to 60hz, good for servos.
-pwm.set_pwm_freq(60)
+# Set the PWM frequency to 50hz, good for servos.
+pwm.set_pwm_freq(50)
 
 # Initialize Pygame
 pygame.init()
@@ -13,15 +14,20 @@ pygame.init()
 # Set up the display
 screen = pygame.display.set_mode((800, 600))
 
-# Define servo channel
+# Define servo channel and starting angle
 servo_channel = 0  # The channel the servo is connected to
+current_angle = 90  # Assuming servo starts at 90 degrees
 
-# Function to set the servo position
-def set_servo_angle(channel, angle):
-    # Convert the angle to a PWM value
-    pulse_length = 4096    # The number of ticks a PWM signal should be high during one period (1/60 seconds)
-    pulse = int((pulse_length * angle) / 180)  # Convert angle to pulse
-    pwm.set_pwm(channel, 0, pulse)
+# Function to set the servo position gradually
+def set_servo_angle(channel, target_angle, delay=0.02):
+    global current_angle  # Use the global variable to track the current angle
+    step = 1 if target_angle > current_angle else -1
+    for angle in range(current_angle, target_angle, step):
+        pulse_length = 4096  # 12-bit resolution
+        pulse = int((pulse_length * angle) / 180)  # Convert angle to pulse
+        pwm.set_pwm(channel, 0, pulse)
+        time.sleep(delay)  # Wait for a short period to see the movement
+    current_angle = target_angle  # Update the current angle once the loop is complete
 
 # Main loop
 running = True
@@ -32,13 +38,15 @@ while running:
         elif event.type == pygame.KEYDOWN:
             # Move servo when certain keys are pressed
             if event.key == pygame.K_LEFT:
-                set_servo_angle(servo_channel, 45)  # Turn servo to 45 degrees
+                # Turn servo to 45 degrees slowly
+                set_servo_angle(servo_channel, 45)
             elif event.key == pygame.K_RIGHT:
-                set_servo_angle(servo_channel, 135) # Turn servo to 135 degrees
-            # Add more key events to control the servo as needed
+                # Turn servo to 135 degrees slowly
+                set_servo_angle(servo_channel, 135)
 
     # Update the display (not necessary for servo control, but included for pygame completeness)
     pygame.display.flip()
 
 # Quit Pygame
 pygame.quit()
+
