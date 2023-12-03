@@ -148,12 +148,16 @@ while running:
         screen.blit(text, [20, 100])
         screen.blit(rock_image, (50, 350))
         draw_robot_face('normal')
+        flipped_screen = pygame.transform.flip(screen, True, True)  # Flip horizontally and vertically
+        screen.blit(flipped_screen, (0, 0))
         pygame.display.update()
         pygame.time.delay(1000)
 
     screen.fill((0, 0, 0))
     screen.blit(rock_image, (50, 350))
     draw_robot_face('normal')
+    flipped_screen = pygame.transform.flip(screen, True, True)  # Flip horizontally and vertically
+    screen.blit(flipped_screen, (0, 0))
     pygame.display.update()
 
     # Get hand shape
@@ -173,11 +177,14 @@ while running:
 
     screen.fill((0, 0, 0))
 
+    # Draw the current image if it's not None
+    if current_image is not None:
+        screen.blit(current_image, (50, 350))  # Draw the image at position (50, 350)
     draw_robot_face(current_emotion)
 
-    # Draw the current image if it's not None
-    #if current_image is not None:
-    screen.blit(current_image, (50, 350))  # Draw the image at position (50, 50)
+    # Flip and update the screen
+    flipped_screen = pygame.transform.flip(screen, True, True)  # Flip horizontally and vertical
+    screen.blit(flipped_screen, (0, 0))
 
     # Update the display
     pygame.display.update()
