@@ -13,10 +13,11 @@ rock_image = pygame.image.load('image/rock.png')
 scissors_image = pygame.image.load('image/scissors.png')
 paper_image = pygame.image.load('image/paper.png')
 
+hands_image_size = (200, 200)
 # Resize the images
-rock_image = pygame.transform.scale(rock_image, (100, 100))
-scissors_image = pygame.transform.scale(scissors_image, (100, 100))
-paper_image = pygame.transform.scale(paper_image, (100, 100))
+rock_image = pygame.transform.scale(rock_image, hands_image_size)
+scissors_image = pygame.transform.scale(scissors_image, hands_image_size)
+paper_image = pygame.transform.scale(paper_image, hands_image_size)
 
 # Set the initial image to None (to display nothing)
 current_image = None
@@ -53,6 +54,7 @@ current_emotion = 'normal'
 def draw_robot_face(emotion):
     # Draw the face
     pygame.draw.circle(screen, BLACK, face_position, face_radius)
+    line_width = 20
 
     # Eyebrows
     if emotions[emotion]['eyebrows'] == 'none':
@@ -60,55 +62,55 @@ def draw_robot_face(emotion):
         pass
     elif emotions[emotion]['eyebrows'] == 'surprise':
         # Draw surprise eyebrows
-        pygame.draw.arc(screen, LIGHT_BLUE, (face_position[0] - 430, face_position[1] - 250, 100, 100), 2*3.14, 3.14, 8) # posw,posh) erase (draw black), draw (blue), line size)
-        pygame.draw.arc(screen, LIGHT_BLUE, (face_position[0] + 370, face_position[1] - 250, 100, 100), 2*3.14, 3.14, 8) # posw,posh) erase (draw black), draw (blue), line size)
+        pygame.draw.arc(screen, LIGHT_BLUE, (face_position[0] - 430, face_position[1] - 250, 100, 100), 2*3.14, 3.14, width=line_width) # posw,posh) erase (draw black), draw (blue), line size)
+        pygame.draw.arc(screen, LIGHT_BLUE, (face_position[0] + 370, face_position[1] - 250, 100, 100), 2*3.14, 3.14, width=line_width) # posw,posh) erase (draw black), draw (blue), line size)
 
     # Eyes
     if emotions[emotion]['eyes'] == 'normal':
         # Draw normal eyes
-        pygame.draw.ellipse(screen, LIGHT_BLUE, (face_position[0] - 400, face_position[1] - 150, 30, 100)) #pos, w, h
-        pygame.draw.ellipse(screen, LIGHT_BLUE, (face_position[0] + 400, face_position[1] - 150, 30, 100))
+        pygame.draw.ellipse(screen, LIGHT_BLUE, (face_position[0] - 400, face_position[1] - 150, 50, 150)) #Rect=（中心ｘ座標、中心ｙ座標、幅、高さ）
+        pygame.draw.ellipse(screen, LIGHT_BLUE, (face_position[0] + 400, face_position[1] - 150, 50, 150))
     elif emotions[emotion]['eyes'] == 'happy':
         # Draw happy eyes
-        pygame.draw.arc(screen, LIGHT_BLUE, (face_position[0] - 430, face_position[1] - 180, 100, 100), 2*3.14, 3.14, 8)
-        pygame.draw.arc(screen, LIGHT_BLUE, (face_position[0] + 370, face_position[1] - 180, 100, 100), 2*3.14, 3.14, 8)
+        pygame.draw.arc(screen, LIGHT_BLUE, (face_position[0] - 430, face_position[1] - 180, 100, 100), 2*3.14, 3.14, width=line_width)
+        pygame.draw.arc(screen, LIGHT_BLUE, (face_position[0] + 370, face_position[1] - 180, 100, 100), 2*3.14, 3.14, width=line_width)
     elif emotions[emotion]['eyes'] == 'excited':
         # Draw excited eyes
-        pygame.draw.line(screen, LIGHT_BLUE, (face_position[0] - 300, face_position[1] - 150), (face_position[0] - 400, face_position[1] - 190), 8)
-        pygame.draw.line(screen, LIGHT_BLUE, (face_position[0] - 400, face_position[1] - 110), (face_position[0] - 300, face_position[1] - 150), 8)
-        pygame.draw.line(screen, LIGHT_BLUE, (face_position[0] + 300, face_position[1] - 150), (face_position[0] + 400, face_position[1] - 190), 8)
-        pygame.draw.line(screen, LIGHT_BLUE, (face_position[0] + 400, face_position[1] - 110), (face_position[0] + 300, face_position[1] - 150), 8)
+        pygame.draw.line(screen, LIGHT_BLUE, (face_position[0] - 300, face_position[1] - 150), (face_position[0] - 400, face_position[1] - 190), width=line_width)
+        pygame.draw.line(screen, LIGHT_BLUE, (face_position[0] - 400, face_position[1] - 110), (face_position[0] - 300, face_position[1] - 150), width=line_width)
+        pygame.draw.line(screen, LIGHT_BLUE, (face_position[0] + 300, face_position[1] - 150), (face_position[0] + 400, face_position[1] - 190), width=line_width)
+        pygame.draw.line(screen, LIGHT_BLUE, (face_position[0] + 400, face_position[1] - 110), (face_position[0] + 300, face_position[1] - 150), width=line_width)
     elif emotions[emotion]['eyes'] == 'cry':
         # Draw cry eyes
-        pygame.draw.line(screen, LIGHT_BLUE, (face_position[0] - 300, face_position[1] - 200), (face_position[0] - 400, face_position[1] - 200), 8)
-        pygame.draw.line(screen, LIGHT_BLUE, (face_position[0] + 300, face_position[1] - 200), (face_position[0] + 400, face_position[1] - 200), 8)
-        pygame.draw.line(screen, LIGHT_BLUE, (face_position[0] - 375, face_position[1] - 200), (face_position[0] - 375, face_position[1] + 200), 5)
-        pygame.draw.line(screen, LIGHT_BLUE, (face_position[0] - 325, face_position[1] - 200), (face_position[0] - 325, face_position[1] + 200), 5)
-        pygame.draw.line(screen, LIGHT_BLUE, (face_position[0] + 325, face_position[1] - 200), (face_position[0] + 325, face_position[1] + 200), 5)
-        pygame.draw.line(screen, LIGHT_BLUE, (face_position[0] + 375, face_position[1] - 200), (face_position[0] + 375, face_position[1] + 200), 5)
+        pygame.draw.line(screen, LIGHT_BLUE, (face_position[0] - 300, face_position[1] - 200), (face_position[0] - 400, face_position[1] - 200), width=line_width)
+        pygame.draw.line(screen, LIGHT_BLUE, (face_position[0] + 300, face_position[1] - 200), (face_position[0] + 400, face_position[1] - 200), width=line_width)
+        pygame.draw.line(screen, LIGHT_BLUE, (face_position[0] - 375, face_position[1] - 200), (face_position[0] - 375, face_position[1] + 200), width=line_width)
+        pygame.draw.line(screen, LIGHT_BLUE, (face_position[0] - 325, face_position[1] - 200), (face_position[0] - 325, face_position[1] + 200), width=line_width)
+        pygame.draw.line(screen, LIGHT_BLUE, (face_position[0] + 325, face_position[1] - 200), (face_position[0] + 325, face_position[1] + 200), width=line_width)
+        pygame.draw.line(screen, LIGHT_BLUE, (face_position[0] + 375, face_position[1] - 200), (face_position[0] + 375, face_position[1] + 200), width=line_width)
 
 
     # Mouth
     if emotions[emotion]['mouth'] == 'smile':
         # Draw smile mouth
-        pygame.draw.arc(screen, LIGHT_BLUE, (face_position[0] - 40, face_position[1] + 50, 80, 80), 3.14, 2*3.14, 5) # w,h) erase (draw black), draw (blue), line size)
+        pygame.draw.arc(screen, LIGHT_BLUE, (face_position[0] - 40, face_position[1] + 50, 80, 80), 3.14, 2*3.14, width=line_width) # w,h) erase (draw black), draw (blue), line size)
     elif emotions[emotion]['mouth'] == 'surprise':
         # Draw surprise mouth
-        pygame.draw.arc(screen, LIGHT_BLUE, (face_position[0] - 30, face_position[1], 50, 80), 0, 2*3.14, 5)
+        pygame.draw.arc(screen, LIGHT_BLUE, (face_position[0] - 30, face_position[1], 50, 80), 0, 2*3.14, width=line_width)
     elif emotions[emotion]['mouth'] == 'cat':
         # Draw cat mouth
-        pygame.draw.arc(screen, LIGHT_BLUE, (face_position[0] - 60, face_position[1] + 100, 80, 80), 3.14, 2*3.14, 5)
-        pygame.draw.arc(screen, LIGHT_BLUE, (face_position[0] + 10, face_position[1] + 100, 80, 80), 3.14, 2*3.14, 5)
+        pygame.draw.arc(screen, LIGHT_BLUE, (face_position[0] - 60, face_position[1] + 100, 80, 80), 3.14, 2*3.14, width=line_width)
+        pygame.draw.arc(screen, LIGHT_BLUE, (face_position[0] + 10, face_position[1] + 100, 80, 80), 3.14, 2*3.14, width=line_width)
     elif emotions[emotion]['mouth'] == 'sad':
         # Draw sad mouth
-        pygame.draw.arc(screen, LIGHT_BLUE, (face_position[0] - 40, face_position[1] + 50, 110, 150), 2*3.14, 3.14, 5)
-        pygame.draw.line(screen, LIGHT_BLUE, (face_position[0] - 20, face_position[1] + 120), (face_position[0] - 10, face_position[1] + 90), 5)
-        pygame.draw.line(screen, LIGHT_BLUE, (face_position[0] + 50, face_position[1] + 120), (face_position[0] + 40, face_position[1] + 90), 5)
+        pygame.draw.arc(screen, LIGHT_BLUE, (face_position[0] - 40, face_position[1] + 50, 110, 150), 2*3.14, 3.14, width=line_width)
+        #pygame.draw.line(screen, LIGHT_BLUE, (face_position[0] - 20, face_position[1] + 120), (face_position[0] - 10, face_position[1] + 90), width=5)
+        #pygame.draw.line(screen, LIGHT_BLUE, (face_position[0] + 50, face_position[1] + 120), (face_position[0] + 40, face_position[1] + 90), width=5)
     elif emotions[emotion]['mouth'] == 'tongue':
         # Draw mouth with tongue
-        pygame.draw.arc(screen, LIGHT_BLUE, (face_position[0] - 80, face_position[1] + 20, 80, 80), 3.14, 2*3.14, 5)
-        pygame.draw.arc(screen, LIGHT_BLUE, (face_position[0] - 10, face_position[1] + 20, 80, 80), 3.14, 2*3.14, 5)
-        pygame.draw.arc(screen, LIGHT_BLUE, (face_position[0] - 40, face_position[1], 80, 200), 3.14, 2*3.14, 5)
+        pygame.draw.arc(screen, LIGHT_BLUE, (face_position[0] - 80, face_position[1] + 20, 80, 80), 3.14, 2*3.14, width=line_width)
+        pygame.draw.arc(screen, LIGHT_BLUE, (face_position[0] - 10, face_position[1] + 20, 80, 80), 3.14, 2*3.14, width=line_width)
+        pygame.draw.arc(screen, LIGHT_BLUE, (face_position[0] - 40, face_position[1], 80, 200), 3.14, 2*3.14, width=line_width)
 
     pygame.display.flip()
 
